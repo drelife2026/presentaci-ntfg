@@ -250,6 +250,64 @@
     .pair{flex-direction:column;gap:1.2em}
     .head{flex-direction:column;align-items:flex-start;gap:.2em}
   }
+
+  /* ── Mobile (phone) ── */
+  @media (max-width:640px){
+    :root{
+      --slide-px: 20px;
+      --slide-py: 18px;
+      --slide-py-bot: 14px;
+      --gap-title-content: clamp(20px,4vh,36px);
+      --gap-section: clamp(16px,3vh,28px);
+    }
+
+    /* slides scroll vertically so content never clips */
+    .slide{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:72px}
+
+    /* hide secondary brand label — too cramped */
+    .brand{display:none}
+
+    /* tag pill: smaller */
+    .tag{font-size:9px;padding:.45em .9em}
+
+    /* statement slides: full width */
+    .statement{max-width:100%}
+
+    /* objectives: override forced row direction */
+    .obj-layout{
+      flex-direction:column !important;
+      align-items:flex-start !important;
+      padding-right:0 !important;
+      gap:clamp(16px,3vh,28px) !important;
+    }
+    .obj-left{max-width:100%}
+    .obj-col{width:100%}
+
+    /* circles: compact so they sit side by side */
+    .circles{gap:clamp(10px,3vw,18px)}
+    .circ-stat{width:clamp(96px,38vw,136px)}
+
+    /* big-para: don't constrain width on phone */
+    .big-para{max-width:100%;font-size:clamp(17px,4.5vw,24px)}
+
+    /* bottom bar: stack on very small screens */
+    .botbar{flex-wrap:wrap;gap:8px}
+
+    /* portada bottom row: single column */
+    .botbar .row{--c:1;max-width:100%}
+    .botbar .row .cell{border-top:1px solid var(--line);border-left:0;padding:.6em 0}
+    .botbar .row .cell:first-child{border-top:0}
+
+    /* nav touch targets: minimum 44 px */
+    .nav button{width:44px;height:44px;font-size:20px}
+
+    /* counter: shift left so it clears nav buttons */
+    .counter{right:108px}
+
+    /* hint: moved via JS to "desliza" */
+    .hint{left:20px;bottom:clamp(10px,2vh,18px)}
+  }
+
   @media (prefers-reduced-motion:reduce){
     .slide,[data-anim],.progress{transition:none!important}[data-anim]{opacity:1;transform:none}
   }
@@ -558,6 +616,9 @@
     if(Math.abs(dx)>48){dx<0?next():prev();dismiss()}x0=null;
   },{passive:true});
 
+  if('ontouchstart' in window || navigator.maxTouchPoints>0){
+    hint.textContent='desliza para navegar';
+  }
   function dismiss(){hint.classList.add('gone')}
   setTimeout(dismiss,5000);
   show(0);
