@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La digitalización del sistema tributario — Defensa TFG · Adriana Soriano Mañas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#121110;
+    --paper:#F4F3F0;
+    --white:#FFFFFF;
+    --grey:#A7A49E;
+    --grey-d:#7C7972;
+    --line:#DEDBD5;
+    --sage:#C7D4C8;
+    --sage-deep:#6E7F71;
+    --espresso:#332E2A;
+    --ink-grey:#6E7B6F;
+    --sans:"Inter","Helvetica Neue",Arial,sans-serif;
+
+    /* ── Spacing system ── */
+    --slide-px: clamp(34px,5.6vw,84px);
+    --slide-py: clamp(26px,4.6vh,52px);
+    --slide-py-bot: clamp(22px,3.6vh,40px);
+    --gap-title-content: clamp(48px,6.5vh,80px);   /* título → primer bloque de contenido */
+    --gap-section: clamp(28px,4vh,52px);            /* entre bloques de contenido */
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--paper);color:var(--ink);font-family:var(--sans);
+    overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    font-feature-settings:"ss01","cv05";
+  }
+
+  /* ---------------- deck shell ---------------- */
+  .deck{position:fixed;inset:0}
+  .slide{
+    position:absolute;inset:0;background:var(--paper);
+    display:flex;flex-direction:column;
+    padding:var(--slide-py) var(--slide-px) var(--slide-py-bot);
+    opacity:0;visibility:hidden;transform:translateY(10px);
+    transition:opacity .5s ease,transform .5s ease,visibility .5s;pointer-events:none;
+  }
+  .slide.active{opacity:1;visibility:visible;transform:none;pointer-events:auto}
+  .slide.dark{background:var(--ink);color:var(--white)}
+
+  /* staged reveal */
+  [data-anim]{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+  .active [data-anim]{opacity:1;transform:none;transition-delay:calc(var(--i,0)*.08s + .1s)}
+
+  /* ---------------- top bar ---------------- */
+  .bar{display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .tag{
+    display:inline-flex;align-items:center;border:1px solid var(--line);
+    border-radius:999px;padding:.55em 1.15em;font-size:clamp(9.5px,.9vw,11.5px);
+    font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);white-space:nowrap;
+  }
+  .dark .tag{border-color:rgba(255,255,255,.3);color:#fff}
+  .brand{font-size:clamp(9px,.82vw,10.5px);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
+
+  /* ---------------- content area ---------------- */
+  .content{
+    flex:1;display:flex;flex-direction:column;justify-content:center;
+    min-height:0;padding:clamp(8px,1.6vh,18px) 0;
+  }
+
+  /* section header (number + title) */
+  .head{
+    display:flex;align-items:flex-end;gap:clamp(14px,2vw,30px);
+    margin-bottom:var(--gap-title-content);   /* zona segura bajo el título */
+  }
+  .secnum{font-weight:800;font-size:clamp(54px,8vw,118px);line-height:.8;letter-spacing:-.04em;color:var(--sage-deep)}
+  h1.title{font-weight:800;font-size:clamp(40px,6vw,86px);line-height:.94;letter-spacing:-.035em}
+
+  .g{color:var(--grey)}
+  .dark .g{color:#6F6D69}
+
+  /* ---------------- hero / statement slides ---------------- */
+  .hero{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .hero h1{font-weight:800;font-size:clamp(42px,8vw,104px);line-height:.92;letter-spacing:-.04em}
+  .hero .sub{
+    font-size:clamp(16px,1.9vw,25px);color:var(--grey-d);font-weight:500;
+    margin-top:clamp(24px,4vh,48px);max-width:30ch;line-height:1.3;
+  }
+  .dark .hero .sub{color:#8C8983}
+
+  .statement{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:min(680px,68%)}
+  .statement h1{font-weight:800;font-size:clamp(30px,5.0vw,70px);line-height:1.06;letter-spacing:-.04em}
+  .sage-word{color:var(--sage)}
+  .statement .note{
+    font-size:clamp(14px,1.5vw,19px);color:#8C8983;font-weight:500;
+    margin-top:clamp(32px,4.5vh,56px);max-width:46ch;line-height:1.5;
+  }
+  .statement .thesis{
+    font-size:clamp(15px,1.5vw,20px);color:#fff;font-weight:600;
+    margin-top:clamp(32px,4.5vh,56px);max-width:42ch;line-height:1.4;
+  }
+  .thanks{margin-top:clamp(28px,4vh,48px);font-size:clamp(16px,1.8vw,24px);font-weight:600;color:var(--sage)}
+
+  /* ---------------- index ---------------- */
+  .toc{display:flex;flex-direction:column}
+  .toc-row{
+    display:grid;grid-template-columns:auto 1fr auto;gap:clamp(18px,3vw,44px);align-items:center;
+    padding:clamp(10px,1.6vh,18px) 0;border-top:1px solid var(--line);
+  }
+  .toc-row:last-child{border-bottom:1px solid var(--line)}
+  .toc-row .n{font-weight:800;font-size:clamp(22px,2.4vw,34px);color:var(--sage-deep);letter-spacing:-.03em;min-width:1.6em}
+  .toc-row .t{font-weight:700;font-size:clamp(20px,2.4vw,34px);letter-spacing:-.02em}
+  .toc-row .arw{color:var(--grey);font-size:clamp(14px,1.4vw,18px)}
+
+  /* ---------------- two-column label blocks ---------------- */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,64px)}
+  .cols.thin{grid-template-columns:.9fr 1.1fr}
+  .block .lbl{font-size:clamp(10px,.92vw,12px);font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sage-deep);margin-bottom:.85em}
+  .block p{font-size:clamp(15px,1.4vw,19px);line-height:1.45;font-weight:450;color:var(--ink)}
+  .block p b{font-weight:700}
+  .cols.div .block:nth-child(2){padding-left:clamp(26px,4vw,64px);border-left:1px solid var(--line)}
+  .dark .cols.div .block:nth-child(2){border-left-color:rgba(255,255,255,.18)}
+
+  .big-para{font-size:clamp(20px,2.5vw,34px);line-height:1.22;font-weight:600;letter-spacing:-.015em;max-width:24ch}
+
+  .list{display:flex;flex-direction:column;gap:.7em;margin-top:.2em}
+  .list .li{display:flex;gap:.7em;font-size:clamp(14px,1.3vw,17.5px);line-height:1.4;font-weight:450}
+  .list .li .d{color:var(--sage-deep);font-weight:800}
+  .bases{margin-top:1.1em;font-size:clamp(10.5px,.95vw,12.5px);letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
+
+  /* ---------------- stat / segmented row ---------------- */
+  .row{display:grid;grid-template-columns:repeat(var(--c,3),1fr);margin-top:var(--gap-section)}
+  .cell{padding:0 clamp(14px,2vw,30px);border-left:1px solid var(--line)}
+  .cell:first-child{padding-left:0;border-left:0}
+  .dark .cell{border-left-color:rgba(255,255,255,.16)}
+  .cell .n{font-weight:800;font-size:clamp(26px,3vw,46px);letter-spacing:-.03em;color:var(--sage-deep)}
+  .cell .ar{font-weight:800;font-size:clamp(18px,1.9vw,28px);letter-spacing:-.02em;margin-bottom:.3em}
+  .cell h4{font-weight:700;font-size:clamp(14px,1.3vw,18px);margin:.35em 0 .45em;letter-spacing:-.01em}
+  .cell p{font-size:clamp(12px,1.05vw,14.5px);line-height:1.4;color:var(--grey-d);font-weight:450}
+  .dark .cell p{color:#9A9791}
+
+  /* objectives vertical column (slide 02) */
+  .obj-layout{flex-direction:row !important;align-items:center;gap:clamp(40px,6vw,90px);padding-right:clamp(40px,8vw,140px)}
+  .obj-left{flex:1;display:flex;flex-direction:column;justify-content:center;min-width:0;max-width:52%}
+  .obj-left .head{margin-bottom:clamp(20px,3vh,36px)}
+  .obj-col{display:flex;flex-direction:column;flex-shrink:0;width:clamp(220px,30%,360px)}
+  .obj-col .cell{padding:clamp(14px,2vh,26px) 0;border-left:0;border-top:1px solid var(--line)}
+  .obj-col .cell:first-child{border-top:0;padding-top:0}
+
+  /* dimension rows */
+  .dims{display:flex;flex-direction:column}
+  .dimrow{
+    display:grid;grid-template-columns:minmax(160px,.38fr) 1fr;gap:clamp(28px,4vw,56px);
+    padding:clamp(20px,3vh,32px) 0;border-top:1px solid var(--line);align-items:baseline;
+  }
+  .dimrow:first-child{border-top:0}
+  .dimrow .k{font-weight:700;font-size:clamp(16px,1.6vw,22px);letter-spacing:-.02em}
+  .dimrow .k small{display:block;font-weight:500;color:var(--grey);font-size:.6em;letter-spacing:.04em;margin-top:.2em;text-transform:uppercase}
+  .dimrow .v{font-size:clamp(12.5px,1.1vw,15px);line-height:1.45;color:var(--grey-d);font-weight:450}
+
+  /* circles */
+  .circles{display:flex;gap:clamp(20px,3vw,44px);align-items:center;justify-content:center;flex-wrap:wrap}
+  .circ-stat{
+    width:clamp(140px,15vw,196px);aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:1em;
+  }
+  .circ-stat.sage{background:var(--sage);color:var(--ink)}
+  .circ-stat.espresso{background:var(--espresso);color:#fff}
+  .circ-stat.ring{background:transparent;border:1px solid var(--line)}
+  .circ-stat .big{font-weight:800;font-size:clamp(28px,3.4vw,48px);letter-spacing:-.03em;line-height:1}
+  .circ-stat .lab{font-size:clamp(10.5px,1vw,13px);font-weight:500;margin-top:.5em;line-height:1.25;opacity:.85;max-width:14ch}
+
+  /* big number pair (resultado 4) */
+  .pair{display:flex;gap:clamp(28px,5vw,72px)}
+  .pair .item .num{font-weight:800;font-size:clamp(44px,6vw,84px);letter-spacing:-.04em;line-height:.85}
+  .pair .item .num.soft{color:var(--sage-deep)}
+  .pair .item .cap{font-size:clamp(11px,1.05vw,14px);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--grey-d);margin-top:.7em}
+
+  /* chain (dark resultados) */
+  .chain{display:grid;grid-template-columns:repeat(4,1fr);margin-top:var(--gap-section)}
+  .chain .st{padding:0 clamp(14px,1.8vw,26px);border-left:1px solid rgba(255,255,255,.16)}
+  .chain .st:first-child{padding-left:0;border-left:0}
+  .chain .st .cn{font-weight:800;font-size:clamp(32px,3.6vw,56px);color:var(--sage);letter-spacing:-.03em;line-height:.9}
+  .chain .st h4{font-weight:700;font-size:clamp(15px,1.4vw,20px);margin:.5em 0 .4em;letter-spacing:-.02em}
+  .chain .st p{font-size:clamp(12px,1.05vw,14px);line-height:1.4;color:#9A9791;font-weight:450}
+
+  /* conclusions grid */
+  .quad{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(40px,7vh,80px) clamp(28px,4.5vw,70px);
+    margin-top:var(--gap-section);
+  }
+  .qitem{padding-top:0}
+  .qitem .qn{font-weight:800;font-size:clamp(14px,1.3vw,17px);color:var(--sage-deep);letter-spacing:.04em}
+  .qitem h4{font-weight:700;font-size:clamp(16px,1.55vw,21px);letter-spacing:-.02em;margin:.2em 0 .55em;line-height:1.12;padding-bottom:.55em;border-bottom:2px solid var(--ink)}
+  .qitem p{font-size:clamp(12.5px,1.08vw,15px);line-height:1.45;color:var(--grey-d);font-weight:450}
+  .qitem p b{color:var(--ink);font-weight:700}
+
+  .accent{color:var(--sage-deep);font-weight:700}
+  .ref{font-weight:800;letter-spacing:-.01em}
+
+  /* ---------------- bottom bar ---------------- */
+  .botbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:auto;padding-top:clamp(12px,2vh,18px)}
+  .circ{
+    width:clamp(34px,3vw,42px);height:clamp(34px,3vw,42px);border-radius:50%;border:1px solid var(--line);
+    display:grid;place-items:center;font-size:clamp(13px,1.2vw,16px);color:var(--ink);flex:none;
+  }
+  .dark .circ{border-color:rgba(255,255,255,.3);color:#fff}
+  .sec-l{font-size:clamp(9.5px,.88vw,11.5px);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
+  .meta-r{display:flex;gap:clamp(14px,2vw,30px);font-size:clamp(9.5px,.88vw,11.5px);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
+  .meta-r b{color:var(--ink);font-weight:700}
+  .dark .meta-r b{color:#fff}
+
+  /* ---------------- chrome ---------------- */
+  .progress{position:fixed;top:0;left:0;height:3px;background:var(--sage-deep);width:0;transition:width .4s ease;z-index:60}
+  .counter{
+    position:fixed;top:clamp(12px,2.4vh,22px);right:clamp(16px,3vw,34px);z-index:50;
+    font-size:clamp(10px,.95vw,12px);font-weight:700;letter-spacing:.18em;color:var(--ink);font-variant-numeric:tabular-nums;
+  }
+  body.on-dark .counter{color:#fff}
+  .counter b{color:var(--sage-deep)}
+  body.on-dark .counter b{color:var(--sage)}
+  .nav{position:fixed;bottom:clamp(14px,2.4vh,24px);right:clamp(16px,3vw,34px);display:flex;gap:9px;z-index:50}
+  .nav button{
+    width:clamp(38px,3.2vw,46px);height:clamp(38px,3.2vw,46px);border-radius:50%;
+    border:1px solid var(--line);background:rgba(255,255,255,.6);backdrop-filter:blur(6px);
+    color:var(--ink);font-size:18px;cursor:pointer;display:grid;place-items:center;transition:.18s;
+  }
+  body.on-dark .nav button{border-color:rgba(255,255,255,.32);background:rgba(20,18,16,.4);color:#fff}
+  .nav button:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+  body.on-dark .nav button:hover{background:#fff;color:var(--ink)}
+  .nav button:active{transform:scale(.93)}
+  .nav button:disabled{opacity:.3;cursor:default}
+  .nav button:focus-visible{outline:2px solid var(--sage-deep);outline-offset:3px}
+  .hint{
+    position:fixed;bottom:clamp(14px,2.4vh,24px);left:clamp(34px,5.6vw,84px);z-index:50;
+    font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);transition:opacity .5s;
+  }
+  body.on-dark .hint{color:#7C7973}
+  .hint.gone{opacity:0;pointer-events:none}
+
+  @media (max-width:780px){
+    .cols,.cols.thin,.quad{grid-template-columns:1fr}
+    .cols.div .block:nth-child(2){padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:1em;margin-top:.4em}
+    .row,.chain{grid-template-columns:1fr}
+    .cell,.chain .st{border-left:0;border-top:1px solid var(--line);padding:.8em 0}
+    .cell:first-child,.chain .st:first-child{border-top:0}
+    .dimrow{grid-template-columns:1fr}
+    .pair{flex-direction:column;gap:1.2em}
+    .head{flex-direction:column;align-items:flex-start;gap:.2em}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .slide,[data-anim],.progress{transition:none!important}[data-anim]{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="counter"><b id="cur">01</b> / <span id="tot">14</span></div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 · PORTADA -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Universitat de Barcelona · Facultat de Dret</span><span class="brand" data-anim>Grado en Derecho · 2025/26</span></div>
+    <div class="hero">
+      <h1 data-anim style="--i:1">La digitalización<br>del sistema <span class="g">tributario.</span></h1>
+      <p class="sub" data-anim style="--i:2">La brecha digital y su impacto en la Constitución Española de 1978.</p>
+    </div>
+    <div class="botbar">
+      <div class="row" style="--c:3;margin:0;flex:1;max-width:760px">
+        <div class="cell"><div class="sec-l" style="color:var(--sage-deep);margin-bottom:.4em">Autora</div><div style="font-weight:700;font-size:clamp(14px,1.4vw,18px)">Adriana Soriano Mañas</div></div>
+        <div class="cell"><div class="sec-l" style="color:var(--sage-deep);margin-bottom:.4em">Tutora</div><div style="font-weight:700;font-size:clamp(14px,1.4vw,18px)">M.<span style="vertical-align:baseline;font-size:.85em">ª</span> Isabel Olay de Paz</div></div>
+        <div class="cell"><div class="sec-l" style="color:var(--sage-deep);margin-bottom:.4em">Curso</div><div style="font-weight:700;font-size:clamp(14px,1.4vw,18px)">2025 / 2026</div></div>
+      </div>
+      <span class="circ" aria-hidden="true">↘</span>
+    </div>
+  </section>
+
+  <!-- 2 · EL MURO (dark hook) -->
+  <section class="slide dark">
+    <div class="bar"><span class="tag" data-anim>El punto de partida</span><span class="brand" data-anim>A. Soriano Mañas</span></div>
+    <div class="statement">
+      <h1 data-anim style="--i:1">¿Qué ocurre cuando ese clic<br>se convierte en un <span class="sage-word">muro?</span></h1>
+      <p class="note" data-anim style="--i:2">La tecnología promete acercar la Administración al ciudadano, a un solo clic. Pero para muchos obligados tributarios ese clic no abre una puerta: levanta un muro.</p>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">Planteamiento</span></div>
+  </section>
+
+  <!-- 3 · ÍNDICE -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Recorrido</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="toc">
+        <div class="toc-row" data-anim style="--i:1"><span class="n">01</span><span class="t">Planteamiento</span><span class="arw">↗</span></div>
+        <div class="toc-row" data-anim style="--i:2"><span class="n">02</span><span class="t">Objetivos</span><span class="arw">↗</span></div>
+        <div class="toc-row" data-anim style="--i:3"><span class="n">03</span><span class="t">Metodología y fuentes</span><span class="arw">↗</span></div>
+        <div class="toc-row" data-anim style="--i:4"><span class="n">04</span><span class="t">Estado de la cuestión</span><span class="arw">↗</span></div>
+        <div class="toc-row" data-anim style="--i:5"><span class="n">05</span><span class="t">Resultados</span><span class="arw">↗</span></div>
+        <div class="toc-row" data-anim style="--i:6"><span class="n">06</span><span class="t">Conclusiones</span><span class="arw">↗</span></div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">Índice</span></div>
+  </section>
+
+  <!-- 4 · PLANTEAMIENTO -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Qué y por qué</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">01</span><h1 class="title">Planteamiento</h1></div>
+      <div class="cols div">
+        <div class="block" data-anim style="--i:2">
+          <div class="lbl">Pregunta de investigación</div>
+          <p>¿En qué medida la obligación de relacionarse <b>electrónicamente</b> con la Administración Tributaria genera una <b>brecha digital</b> que afecta a principios y derechos constitucionales?</p>
+        </div>
+        <div class="block" data-anim style="--i:3">
+          <div class="lbl">Hipótesis</div>
+          <p>La configuración actual tensiona la <b>seguridad jurídica</b>, la <b>igualdad</b> y la <b>tutela judicial efectiva</b>. El riesgo puede mitigarse con <b>políticas públicas</b> adecuadas y garantizando el <b>derecho de asistencia</b>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">01 / Planteamiento</span></div>
+  </section>
+
+  <!-- 5 · OBJETIVOS -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Para qué</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content obj-layout">
+      <div class="obj-left">
+        <div class="head" data-anim style="--i:1"><span class="secnum">02</span><h1 class="title">Objetivos</h1></div>
+        <p class="big-para" data-anim style="--i:2">Determinar en qué medida esa obligación genera una brecha digital que afecta a derechos constitucionales, <span class="g">y valorar si las garantías y políticas públicas vigentes bastan para mitigar el riesgo.</span></p>
+      </div>
+      <div class="obj-col">
+        <div class="cell" data-anim style="--i:3"><div class="n">01</div><h4>Marco conceptual y normativo</h4><p>Delimitar el marco de la relación electrónica tributaria.</p></div>
+        <div class="cell" data-anim style="--i:4"><div class="n">02</div><h4>Tres dimensiones</h4><p>Identificarlas y analizar su impacto sobre seguridad jurídica, igualdad y tutela judicial.</p></div>
+        <div class="cell" data-anim style="--i:5"><div class="n">03</div><h4>Respuesta pública</h4><p>Evaluar críticamente la actuación de los poderes públicos.</p></div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">02 / Objetivos</span></div>
+  </section>
+
+  <!-- 6 · METODOLOGÍA Y FUENTES -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Cómo</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">03</span><h1 class="title">Metodología<span class="g"> y fuentes</span></h1></div>
+      <div class="cols div thin">
+        <div class="block" data-anim style="--i:2">
+          <div class="lbl">Metodología</div>
+          <p><b>Dogmático-jurídica:</b> análisis e interpretación de normativa y doctrina, completada con jurisprudencia del <b>TC y del TS</b> para una mirada crítica y no meramente descriptiva.</p>
+        </div>
+        <div class="block" data-anim style="--i:3">
+          <div class="lbl">Fuentes</div>
+          <div class="list">
+            <div class="li"><span class="d">·</span><span><b>Normativa</b> — Constitución, LGT y LPACAP.</span></div>
+            <div class="li"><span class="d">·</span><span><b>Jurisprudencia</b> — STS 953/2023 como pieza central.</span></div>
+            <div class="li"><span class="d">·</span><span><b>Doctrina</b> — revistas especializadas.</span></div>
+            <div class="li"><span class="d">·</span><span><b>Institucionales</b> — OCDE y ONTSI (datos de la brecha).</span></div>
+          </div>
+          <div class="bases">BOE · CENDOJ · Dialnet · Aranzadi</div>
+        </div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">03 / Metodología y fuentes</span></div>
+  </section>
+
+  <!-- 7 · ESTADO DE LA CUESTIÓN -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>De dónde se parte</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">04</span><h1 class="title">Estado de la cuestión</h1></div>
+      <!-- margin-top:0 porque .head ya proporciona var(--gap-title-content) -->
+      <div class="row" style="--c:3;margin-top:0" data-anim style="--i:2">
+        <div class="cell">
+          <p>No existe una definición de <i>Administración electrónica</i>. Se construye desde la Comisión Europea, el preámbulo de la LPACAP y la doctrina (Cerrillo i Martínez, Martínez Gutiérrez).</p>
+        </div>
+        <div class="cell">
+          <h4>Brecha poco estudiada</h4>
+          <p>La brecha está estudiada (OCDE; tres dimensiones de Gil Rodríguez; crítica de Cotino Hueso), pero apenas conectada con lo tributario.</p>
+        </div>
+        <div class="cell">
+          <h4>STS 953/2023</h4>
+          <p>Punto de inflexión que configura el debate sobre la relación electrónica obligatoria.</p>
+        </div>
+      </div>
+      <p class="big-para" data-anim style="--i:3;font-size:clamp(15px,1.5vw,21px);max-width:62ch;margin-top:clamp(48px,7vh,80px)"><span class="accent">El hueco:</span> falta un tratamiento que conecte la brecha digital tributaria con la perspectiva constitucional. Eso es lo que aborda este trabajo.</p>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">04 / Estado de la cuestión</span></div>
+  </section>
+
+  <!-- 8 · RESULTADOS (dark divider + chain) -->
+  <section class="slide dark">
+    <div class="bar"><span class="tag" data-anim>Resultados</span><span class="brand" data-anim>A. Soriano Mañas</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum" style="color:#fff;font-size:clamp(64px,11vw,180px)">05</span><h1 class="title">Resultados</h1></div>
+      <p class="note" data-anim style="--i:2;max-width:64ch;margin-bottom:var(--gap-section)">Cuatro hallazgos encadenados: un conflicto normativo abre una brecha, la brecha impacta en derechos, y la respuesta pública no basta.</p>
+      <div class="chain" style="margin-top:0">
+        <div class="st" data-anim style="--i:3"><div class="cn">1</div><h4>Conflicto normativo</h4><p>Art. 96 LGT frente a art. 14 LPACAP, confirmado por la STS 953/2023.</p></div>
+        <div class="st" data-anim style="--i:4"><div class="cn">2</div><h4>Tres dimensiones</h4><p>La brecha opera en acceso, competencias y aprovechamiento.</p></div>
+        <div class="st" data-anim style="--i:5"><div class="cn">3</div><h4>Impacto constitucional</h4><p>Afecta a seguridad jurídica, igualdad y tutela judicial efectiva.</p></div>
+        <div class="st" data-anim style="--i:6"><div class="cn">4</div><h4>Respuesta insuficiente</h4><p>Existe, pero es soft law sin valor normativo vinculante.</p></div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">05 / Resultados</span></div>
+  </section>
+
+  <!-- 9 · RESULTADO 1 · CONFLICTO -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Resultado 01 · El conflicto que origina la brecha</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">05</span><h1 class="title">Conflicto<span class="g"> normativo</span></h1></div>
+      <div class="cols div" style="margin-bottom:var(--gap-section)">
+        <div class="block" data-anim style="--i:2">
+          <div class="lbl">Art. 96 LGT</div>
+          <p>Configura la relación electrónica de la persona física como un <b>derecho potestativo</b>.</p>
+        </div>
+        <div class="block" data-anim style="--i:3">
+          <div class="lbl">Art. 14.3 LPACAP</div>
+          <p>Permite convertir ese derecho en <b>obligación</b> por vía reglamentaria.</p>
+        </div>
+      </div>
+      <p class="big-para" data-anim style="--i:4;font-size:clamp(15px,1.5vw,21px);max-width:66ch;margin-top:clamp(36px,5vh,60px)"><span class="ref accent">STS 953/2023</span> — anula parcialmente la Orden HAC/277/2019 por imponer la vía electrónica de forma generalizada sin justificar las circunstancias del art. 14.3. Al exigir esa justificación, <b>reconoce implícitamente</b> que hay colectivos sin esas capacidades: la brecha digital.</p>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">05 / Resultados</span></div>
+  </section>
+
+  <!-- 10 · RESULTADO 2 · DIMENSIONES + DATO -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Resultado 02 · Cómo opera la brecha</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">05</span><h1 class="title">Tres<span class="g"> dimensiones</span></h1></div>
+      <div class="cols thin" style="align-items:center;gap:clamp(26px,4vw,60px)">
+        <div class="dims" data-anim style="--i:2">
+          <div class="dimrow"><div class="k">Acceso<small>tener los medios</small></div><div class="v">Falta de dispositivos, software o conexión. La DEHú exige certificado, Cl@ve o DNIe; la cobertura ronda el 94 %, pero no llega con calidad a las zonas rurales.</div></div>
+          <div class="dimrow"><div class="k">Competencias<small>saber usarlos</small></div><div class="v">No saber manejarlos pese a tener acceso. Usar internet no equivale a poder identificarse con un certificado electrónico.</div></div>
+          <div class="dimrow"><div class="k">Aprovechamiento<small>obtener resultado</small></div><div class="v">Depende de las dos anteriores. Sin ellas no se obtiene un certificado de estar al corriente, ni se consulta el tablón, ni se gestiona la cita previa.</div></div>
+        </div>
+        <div class="circles" data-anim style="--i:3">
+          <div class="circ-stat sage"><span class="big">95%</span><span class="lab">usa internet a diario</span></div>
+          <div class="circ-stat espresso"><span class="big">38,7%</span><span class="lab">supera el nivel básico</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">05 / Resultados</span></div>
+  </section>
+
+  <!-- 11 · RESULTADO 3 · IMPACTO CONSTITUCIONAL -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Resultado 03 · El muro tiene forma jurídica</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">05</span><h1 class="title">Impacto<span class="g"> constitucional</span></h1></div>
+      <!-- margin-top:0 porque .head ya proporciona var(--gap-title-content) -->
+      <div class="row" style="--c:3;margin-top:0" data-anim style="--i:2">
+        <div class="cell">
+          <h4>Seguridad jurídica</h4>
+          <p>Falta de claridad: la tensión 96 LGT / 14 LPACAP genera incertidumbre, agravada por notificaciones que presumen acceso y competencias.</p>
+        </div>
+        <div class="cell">
+          <div class="ar">Arts. 14 y 9.2</div>
+          <h4>Igualdad</h4>
+          <p>Una norma neutra produce discriminación indirecta: quien sufre la brecha pierde plazos o asume recargos; quien tiene medios, no.</p>
+        </div>
+        <div class="cell">
+          <div class="ar">Art. 24 CE</div>
+          <h4>Tutela judicial efectiva</h4>
+          <p>Indefensión material. La STS 1973/2024 muestra cómo notificar sin preaviso vulnera la confianza legítima. Si una sociedad con recursos queda indefensa, con más razón el obligado con dificultades.</p>
+        </div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">05 / Resultados</span></div>
+  </section>
+
+  <!-- 12 · RESULTADO 4 · RESPUESTA INSUFICIENTE -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Resultado 04 · La respuesta de los poderes públicos</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">05</span><h1 class="title">Respuesta<span class="g"> insuficiente</span></h1></div>
+      <div class="cols thin" style="align-items:center;gap:clamp(26px,4.5vw,68px)">
+        <div class="block" data-anim style="--i:2">
+          <p style="font-size:clamp(15px,1.45vw,20px)">El <span class="accent">art. 9.2 CE</span> impone promover la inclusión digital. Se han adoptado instrumentos —la <b>Agenda España Digital 2026</b> y los <b>Planes Estratégicos de la AEAT</b>—, pero son <b>soft law</b>, sin valor vinculante. Los objetivos no se cumplen: hace falta una norma clara.</p>
+        </div>
+        <div class="pair" data-anim style="--i:3">
+          <div class="item"><div class="num soft">80%</div><div class="cap">Meta fijada<br>en competencias</div></div>
+          <div class="item"><div class="num">38,7%</div><div class="cap">Dato real<br>alcanzado</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">05 / Resultados</span></div>
+  </section>
+
+  <!-- 13 · CONCLUSIONES -->
+  <section class="slide">
+    <div class="bar"><span class="tag" data-anim>Qué se concluye</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
+    <div class="content">
+      <div class="head" data-anim style="--i:1"><span class="secnum">06</span><h1 class="title">Conclusiones</h1></div>
+      <div class="quad">
+        <div class="qitem" data-anim style="--i:2"><div class="qn">01</div><h4>Respuesta a la pregunta</h4><p>Sí: la obligación genera una brecha que afecta a derechos constitucionales — pero solo cuando se impone de forma <b>generalizada y sin garantías suficientes</b>.</p></div>
+        <div class="qitem" data-anim style="--i:3"><div class="qn">02</div><h4>Hipótesis confirmada, con matices</h4><p>El problema no es la digitalización (legítima ex art. 103 CE), sino su configuración. Y como la respuesta es soft law, el riesgo <b>hoy no está mitigado</b>.</p></div>
+        <div class="qitem" data-anim style="--i:4"><div class="qn">03</div><h4>Propuesta de reforma</h4><p>Reformar los arts. <b>96 LGT y 14 LPACAP</b> para contemplar a los colectivos en brecha y concretar el concepto jurídico indeterminado que la STS 953/2023 dejó abierto; anclar normativamente los Planes de la AEAT.</p></div>
+        <div class="qitem" data-anim style="--i:5"><div class="qn">04</div><h4>Futuras líneas</h4><p>La digitalización en otros ámbitos (civil, penal, laboral) en España y la UE; y otras dimensiones de la brecha: geográfica, de género y socioeconómica.</p></div>
+      </div>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">06 / Conclusiones</span></div>
+  </section>
+
+  <!-- 14 · CIERRE (dark) -->
+  <section class="slide dark">
+    <div class="bar"><span class="tag" data-anim>El muro, de vuelta</span><span class="brand" data-anim>A. Soriano Mañas</span></div>
+    <div class="statement">
+      <h1 data-anim style="--i:1">El muro existe<br>y tiene <span class="sage-word">forma jurídica.</span></h1>
+      <p class="thesis" data-anim style="--i:2">Digitalizar no es el problema; hacerlo sin garantías, sí. Y eso tiene solución legislativa.</p>
+      <p class="thanks" data-anim style="--i:3">Muchas gracias por su atención.</p>
+    </div>
+    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">Defensa · TFG</span></div>
+  </section>
+
+</div>
+
+<div class="hint" id="hint">← → para navegar · F pantalla completa</div>
+<div class="nav">
+  <button id="prev" aria-label="Anterior">‹</button>
+  <button id="next" aria-label="Siguiente">›</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const total=slides.length;let i=0;
+  const cur=document.getElementById('cur'),tot=document.getElementById('tot');
+  const prog=document.getElementById('progress');
+  const prevB=document.getElementById('prev'),nextB=document.getElementById('next');
+  const hint=document.getElementById('hint');
+  tot.textContent=String(total).padStart(2,'0');
+
+  function show(n){
+    i=Math.max(0,Math.min(total-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    document.body.classList.toggle('on-dark',slides[i].classList.contains('dark'));
+    cur.textContent=String(i+1).padStart(2,'0');
+    prog.style.width=(i/(total-1)*100)+'%';
+    prevB.disabled=i===0;nextB.disabled=i===total-1;
+  }
+  const next=()=>show(i+1),prev=()=>show(i-1);
+  nextB.onclick=next;prevB.onclick=prev;
+
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();next();dismiss()}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();prev();dismiss()}
+    else if(e.key==='Home')show(0);
+    else if(e.key==='End')show(total-1);
+    else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.()}
+  });
+
+  let x0=null;
+  document.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>48){dx<0?next():prev();dismiss()}x0=null;
+  },{passive:true});
+
+  function dismiss(){hint.classList.add('gone')}
+  setTimeout(dismiss,5000);
+  show(0);
+</script>
+</body>
+</html>
