@@ -24,7 +24,7 @@
     /* ── Spacing system ── */
     --slide-px: clamp(34px,5.6vw,84px);
     --slide-py: clamp(26px,4.6vh,52px);
-    --slide-py-bot: clamp(22px,3.6vh,40px);
+    --slide-py-bot: clamp(64px,8vh,88px);
     --gap-title-content: clamp(48px,6.5vh,80px);   /* título → primer bloque de contenido */
     --gap-section: clamp(28px,4vh,52px);            /* entre bloques de contenido */
   }
@@ -116,7 +116,7 @@
   /* ---------------- two-column label blocks ---------------- */
   .cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(26px,4vw,64px)}
   .cols.thin{grid-template-columns:.9fr 1.1fr}
-  .block .lbl{font-size:clamp(12px,1.15vw,15px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sage-deep);margin-bottom:1.1em;padding-top:.9em;border-top:2px solid var(--sage)}
+  .block .lbl{font-size:clamp(12px,1.15vw,15px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sage-deep);margin-bottom:1.1em;padding-bottom:.9em;border-bottom:2px solid var(--sage)}
   .dark .block .lbl{border-top-color:rgba(199,212,200,.35)}
   .block p{font-size:clamp(15px,1.4vw,19px);line-height:1.45;font-weight:450;color:var(--ink)}
   .block p b{font-weight:700}
@@ -194,7 +194,7 @@
   }
   .qitem{padding-top:0}
   .qitem .qn{font-weight:800;font-size:clamp(14px,1.3vw,17px);color:var(--sage-deep);letter-spacing:.04em}
-  .qitem h4{font-weight:700;font-size:clamp(16px,1.55vw,21px);letter-spacing:-.02em;margin:.2em 0 .55em;line-height:1.12;padding-bottom:.55em;border-bottom:2px solid var(--ink)}
+  .qitem h4{font-weight:700;font-size:clamp(16px,1.55vw,21px);letter-spacing:-.02em;margin:.2em 0 .55em;line-height:1.12;padding-bottom:.55em;border-bottom:2px solid var(--sage)}
   .qitem p{font-size:clamp(12.5px,1.08vw,15px);line-height:1.45;color:var(--grey-d);font-weight:450}
   .qitem p b{color:var(--ink);font-weight:700}
 
@@ -257,7 +257,7 @@
     :root{
       --slide-px: 20px;
       --slide-py: 18px;
-      --slide-py-bot: 14px;
+      --slide-py-bot: 72px;
       --gap-title-content: clamp(20px,4vh,36px);
       --gap-section: clamp(16px,3vh,28px);
     }
@@ -320,31 +320,25 @@
 
 <div class="deck" id="deck">
 
-  <!-- 1 · PORTADA -->
+  <!-- 1 · PORTADA + APERTURA NARRATIVA (FUSIONADA) -->
   <section class="slide">
     <div class="bar"><span class="tag" data-anim>Universidad de Barcelona · Facultad de Derecho</span><span class="brand" data-anim>Grado en Derecho · 2025/26</span></div>
-    <div class="hero">
-      <h1 data-anim style="--i:1">La digitalización<br>del sistema <span class="g">tributario.</span></h1>
-      <p class="sub" data-anim style="--i:2">La brecha digital y su impacto en la Constitución Española de 1978.</p>
+    <div class="content" style="gap:0">
+      <h1 data-anim style="--i:1;font-weight:800;font-size:clamp(36px,6.8vw,96px);line-height:.9;letter-spacing:-.04em;max-width:20ch">
+        ¿Qué ocurre<br>cuando ese clic<br>se convierte<br>en un <span style="color:var(--sage-deep)">muro?</span>
+      </h1>
+      <p data-anim style="--i:2;font-size:clamp(13px,1.35vw,18px);color:var(--grey-d);font-weight:500;margin-top:clamp(22px,3.6vh,44px);max-width:58ch;line-height:1.38">
+        La digitalización del sistema tributario y su impacto en la brecha digital desde la perspectiva de la Constitución Española de 1978.
+      </p>
+      <p data-anim style="--i:3;font-size:clamp(14px,1.35vw,18px);color:var(--grey-d);font-weight:500;font-style:italic;margin-top:clamp(18px,2.8vh,34px);max-width:56ch;line-height:1.58;border-left:2px solid var(--sage-deep);padding-left:1.1em">
+        "La tecnología promete acercar la Administración al ciudadano con un solo clic. Pero para muchos obligados tributarios, ese clic no abre una puerta: levanta un muro."
+      </p>
     </div>
     <div class="botbar">
-      <div class="row" style="--c:3;margin:0;flex:1;max-width:760px">
-        <div class="cell"><div class="sec-l" style="color:var(--sage-deep);margin-bottom:.4em">Autora</div><div style="font-weight:700;font-size:clamp(14px,1.4vw,18px)">Adriana Soriano Mañas</div></div>
-        <div class="cell"><div class="sec-l" style="color:var(--sage-deep);margin-bottom:.4em">Tutora</div><div style="font-weight:700;font-size:clamp(14px,1.4vw,18px)">M.<span style="vertical-align:baseline;font-size:.85em">ª</span> Isabel Olay de Paz</div></div>
-        <div class="cell"><div class="sec-l" style="color:var(--sage-deep);margin-bottom:.4em">Curso</div><div style="font-weight:700;font-size:clamp(14px,1.4vw,18px)">2025 / 2026</div></div>
-      </div>
-      <span class="circ" aria-hidden="true">↘</span>
+      <span data-anim style="--i:4;font-size:clamp(11px,1vw,13.5px);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)">
+        Adriana Soriano Mañas &nbsp;&middot;&nbsp; TFG Derecho &nbsp;&middot;&nbsp; Universidad de Barcelona &nbsp;&middot;&nbsp; Curso 2025/26
+      </span>
     </div>
-  </section>
-
-  <!-- 2 · EL MURO (dark hook) -->
-  <section class="slide dark">
-    <div class="bar"><span class="tag" data-anim>El punto de partida</span><span class="brand" data-anim>Adriana Soriano Mañas — TFG 2026</span></div>
-    <div class="statement">
-      <h1 data-anim style="--i:1">¿Qué ocurre cuando ese clic<br>se convierte en un <span class="sage-word">muro?</span></h1>
-      <p class="note" data-anim style="--i:2">La tecnología promete acercar la Administración al ciudadano, a un solo clic. Pero para muchos obligados tributarios ese clic no abre una puerta: levanta un muro.</p>
-    </div>
-    <div class="botbar"><span class="circ" aria-hidden="true">↗</span><span class="sec-l">Planteamiento</span></div>
   </section>
 
   <!-- 3 · ÍNDICE -->
